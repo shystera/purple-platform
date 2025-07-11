@@ -1,0 +1,49 @@
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at top, rgba(88, 28, 135, 0.3), transparent 70%), #000;
+  color: #d1d5db;
+}
+h1, h2, .font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Custom Radio Button Styling */
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  border: 2px solid #374151; /* gray-700 */
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: #9ca3af; /* gray-400 */
+  height: 100%;
+}
+
+.role-option:hover {
+  border-color: #4c1d95; /* purple-900 */
+  background-color: rgba(147, 51, 234, 0.1);
+}
+
+.role-selection input[type="radio"]:checked + .role-option {
+  border-color: #9333ea; /* purple-600 */
+  color: #e5e7eb; /* gray-200 */
+  background-color: rgba(147, 51, 234, 0.15);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+}
+
+.role-selection input[type="radio"]:focus-visible + .role-option {
+    outline: 2px solid #a855f7;
+    outline-offset: 2px;
+}
+
+.role-option svg {
+  transition: color 0.2s ease-in-out;
+}
+
+.role-selection input[type="radio"]:checked + .role-option svg {
+  color: #c084fc; /* purple-400 */
+}

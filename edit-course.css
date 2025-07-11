@@ -1,0 +1,65 @@
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at top, rgba(88, 28, 135, 0.3), transparent 70%), #000;
+  color: #d1d5db;
+}
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', serif;
+}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9333ea; }
+
+/* Custom styles for the editor */
+.lesson-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 0.375rem;
+}
+.lesson-item:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+input:focus, textarea:focus {
+    outline: none !important;
+    border-color: #7e22ce !important;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.5) !important;
+}
+
+.delete-btn {
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+.delete-btn:hover {
+    opacity: 1;
+    color: #f87171; /* red-400 */
+}
+
+/* Dropzone styles */
+.dropzone {
+  border: 2px dashed #4b5563; /* gray-600 */
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.dropzone:hover {
+  border-color: #9333ea; /* purple-600 */
+  background-color: rgba(147, 51, 234, 0.05);
+}
+.dropzone.drag-over {
+  border-color: #a855f7; /* purple-500 */
+  border-style: solid;
+  background-color: rgba(147, 51, 234, 0.1);
+  transform: scale(1.02);
+}
+.dropzone p {
+  pointer-events: none;
+}

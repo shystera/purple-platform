@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Login - Kohza</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+  const SUPABASE_URL = 'https://zqjiamqtmtwrrkdgpfih.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxamlhbXF0bXR3cnJrZGdwZmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMjcwMDQsImV4cCI6MjA2NzcwMzAwNH0.id5oTZhlVxoiwSCt80YhHvndn6Q0Pmy8Wn9_f8lHo_U';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        purple: {
+                            DEFAULT: '#9333ea', '50': '#faf5ff', '100': '#f3e8ff', '200': '#e9d5ff', '300': '#d8b4fe', '400': '#c084fc', '500': '#a855f7', '600': '#9333ea', '700': '#7e22ce', '800': '#6b21a8', '900': '#581c87', '950': '#3b0764'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute w-[80vmax] h-[80vmax] -left-[40vmax] -top-[40vmax] bg-purple-900/40 rounded-full blur-3xl opacity-50"></div>
+        <div class="absolute w-[60vmax] h-[60vmax] -right-[30vmax] -bottom-[20vmax] bg-purple-800/30 rounded-full blur-3xl opacity-50"></div>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        
+        <header class="absolute top-0 left-0 p-6 sm:p-8">
+            <a href="index.html" class="text-3xl font-serif font-bold text-white hover:text-purple-300 transition-colors">Kohza</a>
+        </header>
+
+        <main class="w-full max-w-md">
+            <div class="bg-black/60 backdrop-blur-lg border border-purple-800/50 rounded-xl shadow-lg shadow-purple-950/40 p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-serif text-white">Welcome Back</h1>
+                    <p class="text-gray-400 mt-2">Continue your path of discipline.</p>
+                </div>
+
+                <form id="login-form">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
+                            <div class="mt-1">
+                                <input id="email" name="email" type="email" autocomplete="email" required class="w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600" placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                                <div class="text-sm">
+                                    <a href="#" class="font-medium text-purple-500 hover:text-purple-400">Forgot password?</a>
+                                </div>
+                            </div>
+                            <div class="mt-1">
+                                <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" id="login-button" class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-bold text-white bg-purple-700 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-purple-500 transition-all duration-300 transform hover:-translate-y-0.5">
+                                Continue to Kohza
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-gray-400">
+                        New to the path?
+                        <a href="signup.html" class="font-medium text-purple-400 hover:text-purple-300">Create an account</a>
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+
+  const supabaseUrl = 'https://zqjiamqtmtwrrkdgpfih.supabase.co'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxamlhbXF0bXR3cnJrZGdwZmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMjcwMDQsImV4cCI6MjA2NzcwMzAwNH0.id5oTZhlVxoiwSCt80YhHvndn6Q0Pmy8Wn9_f8lHo_U'
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  const loginForm = document.getElementById('login-form')
+
+  loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const loginBtn = document.getElementById('login-button');
+  loginBtn.innerText = 'Logging in...';
+
+  // Sign in user
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (authError) {
+    alert('Login failed: ' + authError.message);
+    loginBtn.innerText = 'Continue to Kohza';
+    return;
+  }
+
+  const userId = authData.user.id;
+
+  // Fetch role from profiles table
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+
+  if (profileError || !profile) {
+    alert('Could not fetch user role. Please contact support.');
+    return;
+  }
+
+  const role = profile.role;
+  const destination = role === 'coach'
+    ? 'coach-admin-panel.html'
+    : 'student-panel.html';
+
+  window.location.href = destination;
+});
+</script>
+</body>
+</html>

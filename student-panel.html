@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Kohza</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="student-panel.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        purple: {
+                            DEFAULT: '#9333ea', '50': '#faf5ff', '100': '#f3e8ff', '200': '#e9d5ff', '300': '#d8b4fe', '400': '#c084fc', '500': '#a855f7', '600': '#9333ea', '700': '#7e22ce', '800': '#6b21a8', '900': '#581c87', '950': '#3b0764'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute w-[60vmax] h-[60vmax] -left-[30vmax] -top-[30vmax] bg-purple-900/30 rounded-full blur-3xl opacity-40"></div>
+        <div class="absolute w-[50vmax] h-[50vmax] -right-[25vmax] -bottom-[25vmax] bg-purple-800/20 rounded-full blur-3xl opacity-40"></div>
+    </div>
+    
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800/50">
+            <nav class="flex justify-between items-center w-full max-w-screen-xl mx-auto px-6 sm:px-8 py-4">
+                <a href="index.html" class="text-3xl font-serif font-bold text-white transition-colors hover:text-purple-400">Kohza</a>
+                
+                <div class="flex items-center gap-4">
+                     <!-- MINI TIMER -->
+                    <div class="relative" id="mini-timer-container">
+                        <button id="mini-timer-toggle" class="flex items-center gap-2 text-white font-mono rounded-md px-3 py-2 hover:bg-white/10 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            <span id="mini-timer-display">25:00</span>
+                        </button>
+                        <div id="mini-timer-panel" class="hidden absolute top-full right-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-lg p-4 z-50">
+                            <p class="text-white font-bold text-center mb-4">Focus Timer</p>
+                            <div id="timer-presets" class="flex justify-center items-center gap-2 mb-4">
+                                <button data-time="25" class="timer-preset-btn text-xs px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-md text-gray-300 font-semibold hover:bg-gray-700 hover:border-purple-700 hover:text-white transition-colors">25 min</button>
+                                <button data-time="50" class="timer-preset-btn text-xs px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-md text-gray-300 font-semibold hover:bg-gray-700 hover:border-purple-700 hover:text-white transition-colors">50 min</button>
+                                <button data-time="90" class="timer-preset-btn text-xs px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-md text-gray-300 font-semibold hover:bg-gray-700 hover:border-purple-700 hover:text-white transition-colors">90 min</button>
+                            </div>
+                            <div class="flex items-center gap-2 mb-4">
+                                <input type="number" id="custom-time-input" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-center text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500" placeholder="Custom" min="1">
+                                <button id="set-custom-time-btn" class="flex-shrink-0 bg-gray-700 hover:bg-gray-600 text-white font-bold p-2 rounded-md transition-colors">Set</button>
+                            </div>
+                            <div class="flex justify-center items-center gap-2">
+                                <button id="start-pause-btn" class="bg-purple-700 hover:bg-purple-600 text-white font-bold px-6 py-2 rounded-md text-sm transition-colors">Start</button>
+                                <button id="reset-btn" class="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-2 rounded-md text-sm transition-colors">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END MINI TIMER -->
+                    <div class="text-right hidden sm:block">
+                        <p id="user-display-name" class="font-semibold text-white truncate max-w-xs"></p>
+                        <p id="user-display-email" class="text-sm text-gray-400"></p>
+                    </div>
+                    <img id="user-avatar" src="" alt="Student Avatar" class="w-10 h-10 rounded-full border-2 border-purple-700">
+                </div>
+            </nav>
+        </header>
+
+        <main class="max-w-screen-xl mx-auto px-6 sm:px-8 py-12 flex-1">
+            
+            <div class="mb-12">
+                <h1 id="welcome-heading" class="text-4xl md:text-5xl font-serif font-bold text-white">Welcome</h1>
+                <p class="mt-2 text-lg text-gray-400">Your path to mastery continues. Focus and persist.</p>
+            </div>
+
+            <!-- My Courses Section -->
+            <section id="my-courses">
+                <h2 class="text-3xl font-serif font-bold text-white mb-8">My Courses</h2>
+                <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- Course cards will be dynamically inserted here -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-transparent mt-16">
+            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-500 border-t border-gray-900/50">
+                <p>&copy; 2024 Kohza. All Rights Reserved. Forged in Discipline.</p>
+            </div>
+        </footer>
+    </div>
+    
+    <audio id="timer-complete-sound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+    <script type="module" src="supabase-client.js"></script>
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', async () => {
+            const coursesGrid = document.getElementById('courses-grid');
+            if (!coursesGrid) return;
+            coursesGrid.innerHTML = '<p class="text-gray-400 col-span-full text-center">Loading your enrolled courses...</p>';
+
+            if (!window.supabase) {
+                console.error("Supabase client not available.");
+                coursesGrid.innerHTML = '<p class="text-red-400 col-span-full text-center">Error connecting to the database. Please refresh the page.</p>';
+                return;
+            }
+
+            // 1. Check for authenticated user
+            const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+
+            if (userError || !user) {
+                console.error('User not logged in or error fetching user:', userError);
+                window.location.href = 'login.html'; // Redirect to login
+                return;
+            }
+
+            // 2. Update UI with user info
+            const userName = user.user_metadata?.full_name || user.email.split('@')[0];
+            document.getElementById('user-display-name').textContent = userName;
+            document.getElementById('user-display-email').textContent = user.email;
+            document.getElementById('welcome-heading').textContent = `Welcome, ${userName}`;
+            document.getElementById('user-avatar').src = `https://i.pravatar.cc/40?u=${encodeURIComponent(user.email)}`;
+            document.getElementById('user-avatar').alt = `Avatar for ${userName}`;
+
+            try {
+                // --- NEW RELIABLE FETCH LOGIC ---
+                // Start from the enrollments table and select the related course details for the logged-in user.
+                const { data: enrollmentData, error } = await window.supabase
+                    .from('enrollments')
+                    .select(`
+                        courses (
+                            id,
+                            title,
+                            thumbnail,
+                            coach:profiles (
+                                full_name
+                            )
+                        )
+                    `)
+                    .eq('user_id', user.id);
+
+                if (error) {
+                    throw error;
+                }
+
+                // Extract the course objects from the enrollment data.
+                const courses = enrollmentData ? enrollmentData.map(e => e.courses).filter(Boolean) : [];
+
+                if (courses.length === 0) {
+                    coursesGrid.innerHTML = '<p class="text-gray-400 col-span-full text-center">You haven\'t enrolled in any courses yet.</p>';
+                } else {
+                    coursesGrid.innerHTML = courses.map(course => `
+                        <div class="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col transition-all duration-300 hover:border-purple-700/80 hover:shadow-purple-900/40 transform hover:-translate-y-1">
+                            <a href="course-detail.html?id=${course.id}" class="block">
+                               <img src="${course.thumbnail || 'placeholder.jpg'}" alt="Course thumbnail for ${course.title}" class="w-full h-40 object-cover">
+                            </a>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <div class="flex-grow">
+                                    <a href="course-detail.html?id=${course.id}" class="block">
+                                        <h3 class="text-xl font-bold font-serif text-white">${course.title}</h3>
+                                        <p class="text-gray-400 text-sm mt-1">by ${course.coach?.full_name || 'a coach'}</p>
+                                    </a>
+                                </div>
+                                <div class="mt-auto pt-4">
+                                    <a href="course-detail.html?id=${course.id}" class="block text-center w-full bg-purple-700 text-white font-bold px-4 py-2.5 text-sm rounded-md hover:bg-purple-600 transition-colors duration-300">
+                                        Continue Course
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                appendFindNewCoursesCard();
+
+            } catch (error) {
+                console.error('Error loading student dashboard:', error);
+                coursesGrid.innerHTML = `<p class="text-red-400 col-span-full text-center">An error occurred loading your courses. Please try again. Error: ${error.message}</p>`;
+            }
+            
+            function appendFindNewCoursesCard() {
+                coursesGrid.innerHTML += `
+                    <!-- Find New Courses Card -->
+                    <a href="#" class="border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center text-center p-8 hover:border-purple-600 hover:bg-gray-900/50 transition-all duration-300 group">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-800 group-hover:bg-purple-900/50 mb-4 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold font-serif text-white">Find New Courses</h3>
+                        <p class="mt-2 text-gray-400 text-sm">Expand your knowledge and find your next path.</p>
+                    </a>
+                `;
+            }
+
+            // --- FOCUS TIMER LOGIC (MINI-TIMER) ---
+            const miniTimerContainer = document.getElementById('mini-timer-container');
+            const miniTimerToggle = document.getElementById('mini-timer-toggle');
+            const miniTimerPanel = document.getElementById('mini-timer-panel');
+            const miniTimerDisplay = document.getElementById('mini-timer-display');
+
+            // Timer controls inside the panel
+            const startPauseBtn = miniTimerPanel.querySelector('#start-pause-btn');
+            const resetBtn = miniTimerPanel.querySelector('#reset-btn');
+            const presetsContainer = miniTimerPanel.querySelector('#timer-presets');
+            const customTimeInput = miniTimerPanel.querySelector('#custom-time-input');
+            const setCustomTimeBtn = miniTimerPanel.querySelector('#set-custom-time-btn');
+            const completeSound = document.getElementById('timer-complete-sound');
+
+            let timerInterval = null;
+            let totalSeconds = 25 * 60;
+            let secondsLeft = totalSeconds;
+            let isRunning = false;
+            const originalTitle = document.title;
+            
+            // Toggle panel visibility
+            miniTimerToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                miniTimerPanel.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!miniTimerContainer.contains(e.target)) {
+                    miniTimerPanel.classList.add('hidden');
+                }
+            });
+
+            const updateDisplay = () => {
+                const minutes = Math.floor(secondsLeft / 60);
+                const seconds = secondsLeft % 60;
+                const displayString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                miniTimerDisplay.textContent = displayString;
+
+                if (isRunning) {
+                    document.title = `${displayString} - ${originalTitle}`;
+                    miniTimerToggle.classList.add('running');
+                } else {
+                    document.title = originalTitle;
+                    miniTimerToggle.classList.remove('running');
+                }
+            };
+
+            const setTime = (minutes) => {
+                clearInterval(timerInterval);
+                isRunning = false;
+                totalSeconds = minutes * 60;
+                secondsLeft = totalSeconds;
+                startPauseBtn.textContent = 'Start';
+                updateDisplay();
+            };
+
+            const startTimer = () => {
+                if (secondsLeft <= 0) return;
+                isRunning = true;
+                startPauseBtn.textContent = 'Pause';
+                timerInterval = setInterval(() => {
+                    secondsLeft--;
+                    updateDisplay();
+                    if (secondsLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        startPauseBtn.textContent = 'Start';
+                        document.title = "Time's up! - " + originalTitle;
+                        completeSound.play();
+                        setTimeout(() => setTime(totalSeconds / 60), 2000); // Reset after sound with a small delay
+                    }
+                }, 1000);
+            };
+
+            const pauseTimer = () => {
+                isRunning = false;
+                clearInterval(timerInterval);
+                startPauseBtn.textContent = 'Resume';
+                updateDisplay();
+            };
+
+            startPauseBtn.addEventListener('click', () => {
+                if (isRunning) {
+                    pauseTimer();
+                } else {
+                    startTimer();
+                }
+            });
+
+            resetBtn.addEventListener('click', () => {
+                setTime(totalSeconds / 60);
+            });
+
+            presetsContainer.addEventListener('click', (e) => {
+                if (e.target.matches('.timer-preset-btn')) {
+                    const time = parseInt(e.target.dataset.time, 10);
+                    setTime(time);
+                }
+            });
+            
+            setCustomTimeBtn.addEventListener('click', () => {
+                const time = parseInt(customTimeInput.value, 10);
+                if (!isNaN(time) && time > 0) {
+                    setTime(time);
+                }
+                customTimeInput.value = '';
+            });
+
+            // Init timer display
+            updateDisplay();
+
+
+            document.addEventListener('contextmenu', event => event.preventDefault());
+        });
+    </script>
+</body>
+</html>

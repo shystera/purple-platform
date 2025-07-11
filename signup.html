@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Sign Up - Kohza</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="signup.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        purple: {
+                            DEFAULT: '#9333ea', '50': '#faf5ff', '100': '#f3e8ff', '200': '#e9d5ff', '300': '#d8b4fe', '400': '#c084fc', '500': '#a855f7', '600': '#9333ea', '700': '#7e22ce', '800': '#6b21a8', '900': '#581c87', '950': '#3b0764'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased bg-black">
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute w-[80vmax] h-[80vmax] -left-[40vmax] -top-[40vmax] bg-purple-900/40 rounded-full blur-3xl opacity-50"></div>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        <header class="absolute top-0 left-0 p-6 sm:p-8">
+            <a href="index.html" class="text-3xl font-serif font-bold text-white hover:text-purple-300 transition-colors">Kohza</a>
+        </header>
+
+        <main class="w-full max-w-lg">
+            <div class="bg-black/60 backdrop-blur-lg border border-purple-800/50 rounded-xl shadow-lg shadow-purple-950/40 p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-serif text-white">Create Your Account</h1>
+                    <p class="text-gray-400 mt-2">Begin your journey on a new path.</p>
+                </div>
+
+                <form id="signup-form">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
+                            <input id="email" name="email" type="email" autocomplete="email" required class="mt-1 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="you@example.com">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">I am a...</label>
+                            <div class="role-selection grid grid-cols-2 gap-4">
+                                <div>
+                                    <input type="radio" id="role-student" name="role" value="student" class="hidden" required checked>
+                                    <label for="role-student" class="role-option flex flex-col items-center p-4 bg-gray-900/70 rounded-md cursor-pointer hover:bg-gray-800 text-white">
+                                        <svg class="w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                        Student
+                                    </label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="role-coach" name="role" value="coach" class="hidden" required>
+                                    <label for="role-coach" class="role-option flex flex-col items-center p-4 bg-gray-900/70 rounded-md cursor-pointer hover:bg-gray-800 text-white">
+                                        <svg class="w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        Coach
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                            <input id="password" name="password" type="password" required class="mt-1 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="••••••••">
+                        </div>
+
+                        <div>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirm Password</label>
+                            <input id="confirm-password" name="confirm-password" type="password" required class="mt-1 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="••••••••">
+                        </div>
+
+                        <div id="message" class="text-sm text-center hidden"></div>
+
+                        <div>
+                            <button type="submit" class="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-bold text-white bg-purple-700 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-purple-500 transition-all duration-300">
+                                Create Account
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-gray-400">
+                        Already on the path?
+                        <a href="login.html" class="font-medium text-purple-400 hover:text-purple-300">Log in</a>
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+
+        const supabaseUrl = 'https://zqjiamqtmtwrrkdgpfih.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxamlhbXF0bXR3cnJrZGdwZmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMjcwMDQsImV4cCI6MjA2NzcwMzAwNH0.id5oTZhlVxoiwSCt80YhHvndn6Q0Pmy8Wn9_f8lHo_U';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupForm = document.getElementById('signup-form');
+            const message = document.getElementById('message');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+
+            if (!signupForm || !message) {
+                console.error('Form or message element not found');
+                return;
+            }
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+
+                if (password !== confirmPassword) {
+                    message.textContent = 'Passwords do not match. Please try again.';
+                    message.classList.remove('hidden');
+                    message.classList.add('text-red-500');
+                    confirmPasswordInput.focus();
+                    return;
+                }
+
+                            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                    emailRedirectTo: 'http://localhost:3000/login.html'
+                    }
+                });
+
+                if (error) {
+                    message.textContent = 'Error: ' + error.message;
+                    message.classList.remove('hidden');
+                    message.classList.add('text-red-500');
+                    return;
+                }
+
+                const userId = data.user?.id;
+                if (userId) {
+                    // Insert into profiles table
+                    const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert([{ id: userId, email, role }]);
+
+                    if (profileError) {
+                    console.error('Profile insertion failed:', profileError.message);
+                    }
+                }
+
+                message.textContent = `Account created successfully as a ${role}! Check your email to confirm.`;
+                message.classList.remove('hidden', 'text-red-500');
+                message.classList.add('text-green-500');
+
+                // Redirect to login.html after a short delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                } catch (err) {
+                message.textContent = 'An unexpected error occurred. Please try again.';
+                message.classList.remove('hidden');
+                message.classList.add('text-red-500');
+                }
+            });
+        });
+
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        
+    </script>
+</body>
+</html>

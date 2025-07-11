@@ -1,0 +1,90 @@
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #000;
+  color: #e5e7eb;
+  overflow-x: hidden;
+}
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9333ea; }
+
+/* Main layout */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+@media (min-width: 1024px) {
+  .main-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .main-content {
+    grid-column: span 3 / span 3;
+  }
+  .sidebar {
+    grid-column: span 2 / span 2;
+  }
+}
+
+/* Sidebar Playlist */
+.module-header .arrow-icon {
+  transition: transform 0.3s ease-in-out;
+}
+.module-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out;
+}
+.module.open .module-header .arrow-icon {
+  transform: rotate(90deg);
+}
+.module.open .module-content {
+  max-height: 1000px; /* Large enough to fit content */
+  transition: max-height 0.5s ease-in;
+}
+
+.lesson-link.active {
+    background-color: rgba(147, 51, 234, 0.2);
+    border-left-color: #9333ea;
+}
+.lesson-link.active .lesson-title {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Transcript */
+.transcript-content {
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+/* Notes Textarea */
+textarea:focus {
+    outline: none !important;
+    border-color: #7e22ce !important;
+    box-shadow: none !important;
+    background-color: #111;
+}
+
+/* Logout button */
+.logout-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+}
+
+/* Mini-timer running state */
+#mini-timer-toggle.running span {
+    color: #4ade80; /* Tailwind green-400 */
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}

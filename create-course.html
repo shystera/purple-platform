@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Course - Kohza</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="create-course.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        purple: {
+                            DEFAULT: '#9333ea', '50': '#faf5ff', '100': '#f3e8ff', '200': '#e9d5ff', '300': '#d8b4fe', '400': '#c084fc', '500': '#a855f7', '600': '#9333ea', '700': '#7e22ce', '800': '#6b21a8', '900': '#581c87', '950': '#3b0764'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute w-[80vmax] h-[80vmax] -left-[40vmax] -top-[40vmax] bg-purple-900/40 rounded-full blur-3xl opacity-50"></div>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        
+        <header class="absolute top-0 left-0 p-6 sm:p-8">
+            <a href="coach-admin-panel.html" class="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+        <main class="w-full max-w-2xl">
+            <div class="bg-black/60 backdrop-blur-lg border border-purple-800/50 rounded-xl shadow-lg shadow-purple-950/40 p-8 sm:p-12">
+                <div class="text-center mb-10">
+                    <h1 class="text-4xl lg:text-5xl font-serif text-white">Create a New Course</h1>
+                    <p class="text-gray-400 mt-3">First, let's set up the basic details for your course.</p>
+                </div>
+
+                <form id="create-course-form">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="title" class="block text-lg font-medium text-gray-300">Course Title</label>
+                            <input id="title" name="title" type="text" required class="mt-2 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white text-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="e.g., The Art of Stoic Resilience">
+                        </div>
+                        <div>
+                            <label for="description" class="block text-lg font-medium text-gray-300">Course Description</label>
+                            <textarea id="description" name="description" rows="4" class="mt-2 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="A brief summary of what students will learn..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-lg font-medium text-gray-300">Course Thumbnail</label>
+                            <div class="mt-2 flex items-center gap-6">
+                                <img id="thumbnail-preview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDA4IiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDQwOCAyNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjM2IwNzY0IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM2YjIxYTgiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTAxMDEwIiAvPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZykiIG9wYWNpdHk9IjAuNSIgLz4KICA8cGF0aCBkPSJNMjU2IDgwbC00OCAyOC00OC0yOC00OCAyOCAwIDU2IDQ4IDI4IDQ4LTI4IDQ4IDI4IDAtNTZ6TTIwOCAxMDhsNDggMjggMCAwLTE2LTktNDgtMjh6TTIwOCAxMDhsLTQ4IDI4djI4bDE2LTkgNDgtMjh6IiBmaWxsPSIjZTNlOGZmIiBmaWxsLW9wYWNpdHk9IjAuMSIgLz4KICA8dGV4dCB4PSI1MCIgeT0iNTAlIiBmb250LWZhbWlseT0iSW50ZXIsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNhMGE5YmUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIj5LZWh6YTwvdGV4dD4KPC9zdmc+" alt="Thumbnail preview" class="h-24 w-40 object-cover rounded-md bg-gray-800 border border-gray-700">
+                                <label for="thumbnail-upload" class="cursor-pointer bg-white/10 border border-white/20 px-5 py-2.5 rounded-md text-white font-semibold hover:bg-white/20 transition-colors duration-300">
+                                    <span>Upload a file</span>
+                                    <input id="thumbnail-upload" name="thumbnail" type="file" class="sr-only" accept="image/png, image/jpeg, image/webp">
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="price" class="block text-lg font-medium text-gray-300">Monthly Price ($)</label>
+                            <input id="price" name="price" type="number" min="0" step="1" required class="mt-2 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white text-xl placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="e.g., 99">
+                        </div>
+                        <div class="pt-4">
+                            <button type="submit" class="w-full py-4 px-4 border border-transparent rounded-md shadow-sm text-xl font-bold text-white bg-purple-700 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-purple-500 transition-all duration-300">
+                                Create and Continue
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabase = createClient('https://zqjiamqtmtwrrkdgpfih.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxamlhbXF0bXR3cnJrZGdwZmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMjcwMDQsImV4cCI6MjA2NzcwMzAwNH0.id5oTZhlVxoiwSCt80YhHvndn6Q0Pmy8Wn9_f8lHo_U');
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const form = document.getElementById('create-course-form');
+    const thumbnailInput = document.getElementById('thumbnail-upload');
+    const thumbnailPreview = document.getElementById('thumbnail-preview');
+    let thumbnailDataUrl = thumbnailPreview.src; // Default fallback
+
+    // ✅ Check if user is logged in
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
+
+    if (!user || userError) {
+      alert('Please log in to create a course.');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    // 📷 Preview thumbnail image
+    thumbnailInput.addEventListener('change', () => {
+        const file = thumbnailInput.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                thumbnailPreview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+  const title = formData.get('title').trim();
+  const description = formData.get('description').trim();
+  const price = parseFloat(formData.get('price'));
+  const file = thumbnailInput.files[0];
+
+  if (!title || isNaN(price) || !file) {
+    alert('Please fill in all required fields, including the thumbnail.');
+    return;
+  }
+
+  // ✅ 1. Upload thumbnail to Supabase Storage (updated bucket name)
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+  const filePath = `${user.id}/${fileName}`;
+
+  const { error: uploadError } = await supabase
+    .storage
+    .from('course-thumbnails') // updated bucket name here
+    .upload(filePath, file);
+
+  if (uploadError) {
+    alert('Thumbnail upload failed: ' + uploadError.message);
+    return;
+  }
+
+  // ✅ 2. Get the public URL of the uploaded image
+  const { data: publicUrlData } = supabase
+    .storage
+    .from('course-thumbnails') // updated bucket name here
+    .getPublicUrl(filePath);
+
+  const thumbnailUrl = publicUrlData.publicUrl;
+
+  // ✅ 3. Insert course into Supabase
+  const { data, error } = await supabase
+    .from('courses')
+    .insert([{
+      title,
+      description,
+      price,
+      thumbnail: thumbnailUrl,
+      coach_id: user.id,
+      modules: []
+    }]);
+
+  if (error) {
+    alert('Error creating course: ' + error.message);
+  } else {
+    alert('Course created successfully!');
+    window.location.href = 'coach-admin-panel.html';
+  }
+});
+    
+  });
+
+  // 🔒 Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+</body>
+</html>

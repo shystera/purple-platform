@@ -1,0 +1,87 @@
+
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(ellipse at top, rgba(88, 28, 135, 0.3), transparent 70%), #000;
+  color: #d1d5db;
+}
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', serif;
+}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9333ea; }
+
+.course-card.is-draft {
+    border-color: #f59e0b; /* A yellow-orange for drafts */
+}
+
+/* Modal Styles */
+.hidden {
+    display: none;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+.modal-panel {
+    background-color: #101010;
+    border: 1px solid #6b21a8;
+    border-radius: 0.75rem;
+    padding: 1.5rem 2rem;
+    max-width: 95%;
+    width: 640px;
+    box-shadow: 0 25px 50px -12px rgba(126, 34, 206, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+.modal-close-button {
+    color: #9ca3af;
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+}
+.modal-close-button:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.student-table th, .student-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2d2d2d;
+}
+.student-table th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.student-table td {
+    font-size: 0.95rem;
+    color: #d1d5db;
+}
+.student-table tbody tr:last-child td { border-bottom: none; }
+.student-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.03); }
+
+/* Edit Course Title Input */
+.course-title-input {
+    line-height: 1.25; /* Match h3 line-height */
+}
+.course-title-input:focus {
+    outline: none;
+    border-color: #7e22ce;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.5);
+}

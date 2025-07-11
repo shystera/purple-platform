@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Course - Kohza</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="edit-course.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        purple: {
+                            DEFAULT: '#9333ea', '50': '#faf5ff', '100': '#f3e8ff', '200': '#e9d5ff', '300': '#d8b4fe', '400': '#c084fc', '500': '#a855f7', '600': '#9333ea', '700': '#7e22ce', '800': '#6b21a8', '900': '#581c87', '950': '#3b0764'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="antialiased">
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute w-[80vmax] h-[80vmax] -left-[40vmax] -top-[40vmax] bg-purple-900/40 rounded-full blur-3xl opacity-50"></div>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center min-h-screen p-4 py-12 sm:p-8">
+        
+        <header class="absolute top-0 left-0 p-6 sm:p-8">
+            <a href="coach-admin-panel.html" class="text-gray-300 hover:text-white transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                Back to Dashboard
+            </a>
+        </header>
+        
+        <main id="editor-main" class="w-full max-w-4xl">
+            <div class="text-center mb-10">
+                <h1 class="text-4xl lg:text-5xl font-serif text-white">Course Editor</h1>
+                <p class="text-gray-400 mt-3 text-lg">Refine your course structure and content.</p>
+            </div>
+
+            <div class="bg-black/40 border border-gray-800 rounded-xl p-6 mb-8">
+                <label for="main-course-title" class="block text-lg font-medium text-gray-300">Course Title</label>
+                <input id="main-course-title" type="text" class="mt-2 w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-md text-white text-xl placeholder-gray-500">
+            </div>
+
+            <div class="bg-black/40 border border-gray-800 rounded-xl p-6 mb-8">
+                <label class="block text-lg font-medium text-gray-300">Course Thumbnail</label>
+                <div class="mt-2 flex items-center gap-6">
+                    <img id="thumbnail-preview" src="" alt="Thumbnail preview" class="h-24 w-40 object-cover rounded-md bg-gray-800 border border-gray-700">
+                    <label for="thumbnail-upload" class="cursor-pointer bg-white/10 border border-white/20 px-5 py-2.5 rounded-md text-white font-semibold hover:bg-white/20 transition-colors duration-300">
+                        <span>Change image</span>
+                        <input id="thumbnail-upload" name="thumbnail" type="file" class="sr-only" accept="image/png, image/jpeg, image/webp">
+                    </label>
+                </div>
+            </div>
+
+            <div id="modules-container" class="space-y-8 mb-8">
+                <!-- Module editor cards will be dynamically inserted here -->
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 mt-12">
+                <button id="add-module-btn" type="button" class="w-full sm:w-auto flex-1 bg-black/40 border border-gray-700 text-white font-bold px-6 py-3 rounded-md hover:border-purple-600 hover:text-purple-300 transition-colors duration-300 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Add Module
+                </button>
+                <button id="save-changes-btn" type="button" class="w-full sm:w-auto flex-1 bg-purple-700 text-white font-bold px-6 py-3 rounded-md hover:bg-purple-600 transition-colors duration-300">
+                    Save Changes
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const editorMain = document.getElementById('editor-main');
+            const mainCourseTitleInput = document.getElementById('main-course-title');
+            const modulesContainer = document.getElementById('modules-container');
+            const addModuleBtn = document.getElementById('add-module-btn');
+            const saveChangesBtn = document.getElementById('save-changes-btn');
+            const thumbnailUpload = document.getElementById('thumbnail-upload');
+            const thumbnailPreview = document.getElementById('thumbnail-preview');
+
+            let courseId;
+            let courseToEdit;
+
+            if (!window.supabase) {
+                editorMain.innerHTML = `<p class="text-center text-red-400 text-xl">Database connection not found. Please refresh.</p>`;
+                return;
+            }
+            const supabase = window.supabase;
+
+            const loadCourse = async (id) => {
+                const { data, error } = await supabase
+                    .from('courses')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error || !data) {
+                    console.error("Error loading course:", error);
+                    editorMain.innerHTML = `<p class="text-center text-red-400 text-xl">Course not found. <a href="coach-admin-panel.html" class="underline">Return to dashboard</a>.</p>`;
+                    return null;
+                }
+                return data;
+            };
+
+            const createLessonElement = (lesson) => {
+                const li = document.createElement('li');
+                li.className = 'lesson-item';
+                li.dataset.lessonId = lesson.id;
+                li.dataset.muxPlaybackId = lesson.muxPlaybackId;
+                li.innerHTML = `
+                    <div class="flex-grow flex items-center gap-3">
+                         <svg class="w-5 h-5 text-purple-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                        <div>
+                            <p class="lesson-title-text font-medium text-gray-200">${lesson.title}</p>
+                            <p class="lesson-filename-text text-xs text-gray-500">${lesson.videoFileName || 'No video file'}</p>
+                        </div>
+                    </div>
+                    <button type="button" class="delete-lesson-btn delete-btn p-1">
+                        <svg class="w-5 h-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                `;
+                return li;
+            };
+            
+            const createModuleElement = (module) => {
+                const div = document.createElement('div');
+                div.className = 'module-card bg-black/60 backdrop-blur-lg border border-purple-800/50 rounded-xl shadow-lg shadow-purple-950/40 p-6';
+                div.dataset.moduleId = module.id;
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-serif text-white">Edit Module</h2>
+                        <button type="button" class="delete-module-btn delete-btn p-1">
+                           <svg class="w-6 h-6 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-md font-medium text-gray-300">Module Title</label>
+                            <input type="text" class="module-title-input mt-1 w-full px-4 py-2 bg-gray-900/70 border border-gray-700 rounded-md text-white" value="${module.title}" required>
+                        </div>
+                        <div class="border-t border-gray-700 pt-4">
+                            <h3 class="text-lg font-semibold text-white mb-2">Lessons</h3>
+                            <ul class="lesson-item-container space-y-2 mb-4"></ul>
+                            <div class="add-lesson-form bg-gray-900/50 p-4 rounded-md hidden">
+                                <input type="text" class="lesson-title-input w-full bg-gray-800 border-gray-600 rounded-md p-2 mb-3" placeholder="Enter New Lesson Title">
+                                <div class="dropzone" tabindex="0">
+                                    <input type="file" class="hidden" accept="video/mp4,video/webm,video/mov">
+                                    <div class="dz-message text-gray-400">
+                                        <svg class="w-10 h-10 mx-auto mb-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        <p class="font-bold">Drag & drop a video file</p>
+                                        <p class="text-sm">or click to select file</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 mt-4">
+                                    <button type="button" class="cancel-add-lesson-btn w-full text-sm bg-gray-600/50 hover:bg-gray-600/80 text-gray-300 font-semibold py-2 px-4 rounded-md transition-colors">Cancel</button>
+                                    <button type="button" class="save-new-lesson-btn w-full text-sm bg-purple-700/80 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Save Lesson</button>
+                                </div>
+                            </div>
+                            <button type="button" class="show-add-lesson-form-btn w-full text-sm bg-purple-900/50 hover:bg-purple-900/80 text-purple-300 font-semibold py-2 px-4 rounded-md transition-colors">Add Lesson</button>
+                        </div>
+                    </div>
+                `;
+                const lessonContainer = div.querySelector('.lesson-item-container');
+                (module.lessons || []).forEach(lesson => lessonContainer.appendChild(createLessonElement(lesson)));
+                modulesContainer.appendChild(div);
+                return div;
+            };
+
+            const renderEditor = () => {
+                mainCourseTitleInput.value = courseToEdit.title;
+                thumbnailPreview.src = courseToEdit.thumbnail;
+                modulesContainer.innerHTML = '';
+                (courseToEdit.modules || []).forEach(module => createModuleElement(module));
+            };
+            
+            const handleSave = async () => {
+                saveChangesBtn.disabled = true;
+                saveChangesBtn.textContent = 'Saving...';
+                
+                const newTitle = mainCourseTitleInput.value.trim();
+                if (!newTitle) {
+                    alert('Course title cannot be empty.');
+                    saveChangesBtn.disabled = false;
+                    saveChangesBtn.textContent = 'Save Changes';
+                    return;
+                }
+
+                const newModules = [];
+                for (const moduleCard of document.querySelectorAll('.module-card')) {
+                    const moduleTitle = moduleCard.querySelector('.module-title-input').value.trim();
+                    if (!moduleTitle) {
+                        alert('Module titles cannot be empty.');
+                        saveChangesBtn.disabled = false; saveChangesBtn.textContent = 'Save Changes';
+                        return;
+                    }
+                    
+                    const module = { id: moduleCard.dataset.moduleId, title: moduleTitle, lessons: [] };
+
+                    for (const lessonItem of moduleCard.querySelectorAll('.lesson-item')) {
+                        const lessonId = lessonItem.dataset.lessonId;
+                        const originalLesson = (courseToEdit.modules || []).flatMap(m => m.lessons || []).find(l => l.id === lessonId);
+                        
+                        module.lessons.push({
+                            id: lessonId,
+                            title: lessonItem.querySelector('.lesson-title-text').textContent,
+                            videoFileName: lessonItem.querySelector('.lesson-filename-text').textContent,
+                            muxPlaybackId: lessonItem.dataset.muxPlaybackId,
+                            isCompleted: originalLesson?.isCompleted || false,
+                            transcript: originalLesson?.transcript || ''
+                        });
+                    }
+                    newModules.push(module);
+                }
+
+                const updateData = { title: newTitle, modules: newModules };
+
+                const file = thumbnailUpload.files[0];
+                if (file) {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) { alert("You must be logged in to upload images."); return; }
+
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+                    
+                    const { error: uploadError } = await supabase.storage.from('course-thumbnails').upload(fileName, file);
+                    if (uploadError) {
+                        alert('Thumbnail upload failed: ' + uploadError.message);
+                        saveChangesBtn.disabled = false; saveChangesBtn.textContent = 'Save Changes';
+                        return;
+                    }
+                    const { data: publicUrlData } = supabase.storage.from('course-thumbnails').getPublicUrl(fileName);
+                    updateData.thumbnail = publicUrlData.publicUrl;
+                }
+
+                const { error: updateError } = await supabase.from('courses').update(updateData).eq('id', courseId);
+                if (updateError) {
+                    alert('Failed to save changes: ' + updateError.message);
+                } else {
+                    alert('Course saved successfully!');
+                    window.location.href = 'coach-admin-panel.html';
+                }
+
+                saveChangesBtn.disabled = false;
+                saveChangesBtn.textContent = 'Save Changes';
+            };
+            
+            const handleFileSelect = (dropzone, files) => {
+                if (files.length === 0) return;
+                const file = files[0];
+                const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Invalid file type. Please upload a MP4, MOV, or WEBM file.');
+                    return;
+                }
+                dropzone.file = file;
+                dropzone.querySelector('.dz-message').innerHTML = `<p class="font-bold text-purple-400">File Ready:</p><p class="text-sm text-white truncate">${file.name}</p>`;
+            };
+
+            const handleContainerClick = async (e) => {
+                const target = e.target;
+                if (target.closest('.delete-lesson-btn')) {
+                    if (confirm('Are you sure you want to delete this lesson?')) {
+                        target.closest('.lesson-item').remove();
+                    }
+                } else if (target.closest('.delete-module-btn')) {
+                    if (confirm('Are you sure you want to delete this module and all its lessons?')) {
+                        target.closest('.module-card').remove();
+                    }
+                } else if (target.classList.contains('show-add-lesson-form-btn')) {
+                    target.classList.add('hidden');
+                    target.previousElementSibling.classList.remove('hidden');
+                } else if (target.classList.contains('cancel-add-lesson-btn')) {
+                    const form = target.closest('.add-lesson-form');
+                    form.classList.add('hidden');
+                    form.nextElementSibling.classList.remove('hidden');
+                } else if (target.classList.contains('save-new-lesson-btn')) {
+                    const btn = target;
+                    const form = btn.closest('.add-lesson-form');
+                    const titleInput = form.querySelector('.lesson-title-input');
+                    const dropzone = form.querySelector('.dropzone');
+                    const title = titleInput.value.trim();
+                    const file = dropzone.file;
+
+                    if (!title || !file) {
+                        alert('Please provide a title and a video file.');
+                        return;
+                    }
+
+                    btn.disabled = true;
+
+                    try {
+                        // This integration requires a Netlify Function at `/.netlify/functions/create-mux-upload`
+                        // to securely handle Mux API authentication and operations.
+                        
+                        // 1. Get an upload URL from our serverless function
+                        btn.textContent = 'Preparing...';
+                        const initResponse = await fetch('/.netlify/functions/create-mux-upload', { method: 'POST' });
+                        if (!initResponse.ok) throw new Error(`Server error during preparation: ${initResponse.statusText}`);
+                        
+                        const { uploadUrl, assetId } = await initResponse.json();
+                        if (typeof uploadUrl !== 'string' || !uploadUrl.trim() || typeof assetId !== 'string' || !assetId.trim()) {
+                            console.error('Invalid response from upload preparation function:', { uploadUrl, assetId });
+                            throw new Error('Could not prepare the video upload. The server response was incomplete.');
+                        }
+                        
+                        // 2. Upload the file directly to Mux's provided URL
+                        btn.textContent = 'Uploading...';
+                        const uploadResponse = await fetch(uploadUrl, { method: 'PUT', body: file });
+                        if (!uploadResponse.ok) throw new Error('Video file upload to Mux failed.');
+
+                        // 3. Poll for the playback ID
+                        btn.textContent = 'Processing...';
+                        const getPlaybackId = () => {
+                            return new Promise((resolve, reject) => {
+                                const intervalId = setInterval(async () => {
+                                    try {
+                                        const pollUrl = new URL(window.location.origin);
+                                        pollUrl.pathname = '/.netlify/functions/create-mux-upload';
+                                        pollUrl.searchParams.set('assetId', assetId);
+
+                                        const pollResponse = await fetch(pollUrl.toString());
+                                        
+                                        if (!pollResponse.ok) {
+                                            clearInterval(intervalId);
+                                            const errBody = await pollResponse.json().catch(() => ({ error: `Polling failed with status: ${pollResponse.statusText}` }));
+                                            const errorMsg = `Polling for video status failed. Server says: "${errBody.error}"`;
+                                            console.error(errorMsg, { response: errBody });
+                                            reject(new Error(errorMsg));
+                                            return;
+                                        }
+
+                                        const pollData = await pollResponse.json();
+                                        
+                                        if (pollData.status === 'ready' && pollData.playbackId) {
+                                            clearInterval(intervalId);
+                                            resolve(pollData.playbackId);
+                                        } else if (pollData.status === 'errored') {
+                                            clearInterval(intervalId);
+                                            reject(new Error('Mux failed to process the video. Please try a different file.'));
+                                        }
+                                        // Otherwise, continue polling
+                                    } catch (error) {
+                                        clearInterval(intervalId);
+                                        reject(error);
+                                    }
+                                }, 3000); // Poll every 3 seconds
+                            });
+                        };
+
+                        const playbackId = await getPlaybackId();
+
+                        const newLesson = {
+                            id: `l${Date.now()}${Math.random().toString(36).substr(2, 5)}`,
+                            title: title,
+                            videoFileName: file.name,
+                            muxPlaybackId: playbackId,
+                            isCompleted: false,
+                            transcript: ''
+                        };
+
+                        const lessonContainer = form.closest('.module-card').querySelector('.lesson-item-container');
+                        lessonContainer.appendChild(createLessonElement(newLesson));
+
+                        // Reset the form
+                        titleInput.value = '';
+                        delete dropzone.file;
+                        dropzone.querySelector('.dz-message').innerHTML = `<svg class="w-10 h-10 mx-auto mb-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg><p class="font-bold">Drag & drop a video file</p><p class="text-sm">or click to select file</p>`;
+                        form.classList.add('hidden');
+                        form.nextElementSibling.classList.remove('hidden');
+
+                    } catch (error) {
+                        console.error("Full error details:", error);
+                        alert(`An error occurred while adding the lesson. Please check the developer console for more details. Message: ${error.message}`);
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = 'Save Lesson';
+                    }
+                } else if (target.closest('.dropzone')) {
+                    target.closest('.dropzone').querySelector('input[type="file"]').click();
+                }
+            };
+
+            async function init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                courseId = urlParams.get('id');
+                if (!courseId) {
+                    editorMain.innerHTML = `<p class="text-center text-red-400 text-xl">No course selected. <a href="coach-admin-panel.html" class="underline">Return to dashboard</a>.</p>`;
+                    return;
+                }
+
+                courseToEdit = await loadCourse(courseId);
+
+                if (courseToEdit) {
+                    renderEditor();
+
+                    thumbnailUpload.addEventListener('change', () => {
+                        const file = thumbnailUpload.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = (e) => { thumbnailPreview.src = e.target.result; };
+                        reader.readAsDataURL(file);
+                    });
+
+                    addModuleBtn.addEventListener('click', () => createModuleElement({ id: `m${Date.now()}`, title: '', lessons: [] }));
+                    saveChangesBtn.addEventListener('click', handleSave);
+                    modulesContainer.addEventListener('click', handleContainerClick);
+
+                    modulesContainer.addEventListener('change', e => { if (e.target.type === 'file') handleFileSelect(e.target.closest('.dropzone'), e.target.files); });
+                    modulesContainer.addEventListener('dragover', e => { e.preventDefault(); const dz = e.target.closest('.dropzone'); if(dz) dz.classList.add('drag-over'); });
+                    modulesContainer.addEventListener('dragleave', e => { const dz = e.target.closest('.dropzone'); if(dz) dz.classList.remove('drag-over'); });
+                    modulesContainer.addEventListener('drop', e => { e.preventDefault(); const dz = e.target.closest('.dropzone'); if (dz) { dz.classList.remove('drag-over'); handleFileSelect(dz, e.dataTransfer.files); } });
+                }
+            }
+
+            init();
+            document.addEventListener('contextmenu', event => event.preventDefault());
+        });
+    </script>
+</body>
+</html>
