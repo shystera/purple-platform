@@ -318,10 +318,14 @@
                             throw new Error(errorBody.error || 'Server error during preparation.');
                         }
                         
-                        const { uploadUrl, assetId } = await initResponse.json();
-                        if (!assetId || !uploadUrl) {
-                            throw new Error('Could not prepare the video upload. The server response was incomplete.');
+                        const responseData = await initResponse.json();
+
+                        // -- Defensive Check & Detailed Logging --
+                        if (!responseData || typeof responseData !== 'object' || !responseData.uploadUrl || !responseData.assetId) {
+                            console.error("Incomplete or malformed response from server. Expected { uploadUrl: '...', assetId: '...' }, but received:", responseData);
+                            throw new Error('Could not prepare video upload. Server response was invalid. Please check the developer console for more details.');
                         }
+                        const { uploadUrl, assetId } = responseData;
                         
                         // 2. Upload the file directly to Mux's provided URL
                         btn.textContent = 'Uploading...';
@@ -385,13 +389,7 @@
 
                     } catch (error) {
                         console.error("Full error details:", error);
-                        let userMessage = `An error occurred while adding the lesson: ${error.message}`;
-                        if (error.message.includes('Mux API credentials')) {
-                            userMessage += '\n\nThis is a server configuration issue. Please ensure MUX_TOKEN_ID and MUX_TOKEN_SECRET are set correctly in the Netlify dashboard.';
-                        } else if (error.message.includes('Server error')) {
-                             userMessage += '\n\nThis could be due to a server-side problem. Please check the Netlify function logs for more details.';
-                        }
-                        alert(userMessage);
+                        alert(`An error occurred while adding the lesson: ${error.message}`);
                     } finally {
                         btn.disabled = false;
                         btn.textContent = 'Save Lesson';
