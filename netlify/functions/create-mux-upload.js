@@ -1,23 +1,15 @@
 
 // netlify/functions/create-mux-upload.js
 
-// This SDK is installed via the updated package.json
 const Mux = require('@mux/mux-node');
 
-// Authenticate using environment variables set in the Netlify UI.
-// Your MUX_TOKEN_ID and MUX_TOKEN_SECRET are required here.
-const { Video } = new Mux(process.env.MUX_TOKEN_ID, process.env.MUX_TOKEN_SECRET);
-
 exports.handler = async (event, context) => {
-  // Set CORS headers to allow requests from your site.
-  // For production, replace '*' with your specific domain e.g., 'https://my-kohza-app.netlify.app'
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   };
 
-  // Handle preflight CORS requests from the browser.
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -27,10 +19,24 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // CRITICAL: Check for environment variables inside the handler.
+    // This prevents the function from crashing on load if keys are missing.
+    if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
+      console.error('Mux environment variables not set.');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Mux API credentials are not configured on the server. The site administrator must set MUX_TOKEN_ID and MUX_TOKEN_SECRET in the Netlify dashboard.' }),
+      };
+    }
+    
+    // Initialize Mux client safely inside the handler.
+    const { Video } = new Mux(process.env.MUX_TOKEN_ID, process.env.MUX_TOKEN_SECRET);
+
     // === HANDLE POST REQUEST: Create a new direct upload URL ===
     if (event.httpMethod === 'POST') {
       const upload = await Video.Uploads.create({
-        cors_origin: '*', // Or your specific domain
+        cors_origin: '*', // For production, lock this to your site's domain
         new_asset_settings: {
           playback_policy: 'public',
           encoding_tier: 'smart',
@@ -49,9 +55,6 @@ exports.handler = async (event, context) => {
 
     // === HANDLE GET REQUEST: Check the status of an asset ===
     if (event.httpMethod === 'GET') {
-      // Add detailed logging to see what the server is receiving.
-      console.log("Received GET request for asset status. Query params:", event.queryStringParameters);
-
       const assetId = event.queryStringParameters && event.queryStringParameters.assetId;
 
       if (!assetId || typeof assetId !== 'string' || !assetId.trim()) {
@@ -75,7 +78,6 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Handle other HTTP methods
     return {
         statusCode: 405,
         headers,
@@ -87,7 +89,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'An internal server error occurred while processing the video.' }),
+      body: JSON.stringify({ error: 'An internal server error occurred while processing the video request.' }),
     };
   }
 };
