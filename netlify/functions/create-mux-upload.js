@@ -18,8 +18,6 @@ export const handler = async (event, context) => {
   }
 
   try {
-    // CRITICAL: Check for environment variables inside the handler.
-    // This prevents the function from crashing on load if keys are missing.
     if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
       console.error('Mux environment variables not set.');
       return {
@@ -29,12 +27,16 @@ export const handler = async (event, context) => {
       };
     }
     
-    // Initialize Mux client safely inside the handler.
-    const { Video } = new Mux(process.env.MUX_TOKEN_ID, process.env.MUX_TOKEN_SECRET);
+    // CORRECT, MODERN MUX SDK (v8+) INITIALIZATION
+    const mux = new Mux({
+      tokenId: process.env.MUX_TOKEN_ID,
+      tokenSecret: process.env.MUX_TOKEN_SECRET,
+    });
 
     // === HANDLE POST REQUEST: Create a new direct upload URL ===
     if (event.httpMethod === 'POST') {
-      const upload = await Video.Uploads.create({
+      // CORRECT SDK USAGE
+      const upload = await mux.video.uploads.create({
         cors_origin: '*', // For production, lock this to your site's domain
         new_asset_settings: {
           playback_policy: 'public',
@@ -65,7 +67,8 @@ export const handler = async (event, context) => {
           return { statusCode: 400, headers, body: JSON.stringify(errorBody) };
       }
 
-      const asset = await Video.Assets.get(assetId);
+      // CORRECT SDK USAGE
+      const asset = await mux.video.assets.get(assetId);
 
       return {
         statusCode: 200,
