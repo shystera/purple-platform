@@ -304,17 +304,22 @@
                     btn.disabled = true;
 
                     try {
-                        // This integration requires a Netlify Function at `/.netlify/functions/create-mux-upload`
-                        // to securely handle Mux API authentication and operations.
-                        
                         // 1. Get an upload URL from our serverless function
                         btn.textContent = 'Preparing...';
                         const initResponse = await fetch('/.netlify/functions/create-mux-upload', { method: 'POST' });
-                        if (!initResponse.ok) throw new Error(`Server error during preparation: ${initResponse.statusText}`);
+                        
+                        if (!initResponse.ok) {
+                            let errorBody;
+                            try {
+                                errorBody = await initResponse.json();
+                            } catch (e) {
+                                errorBody = { error: `Server returned status ${initResponse.status}: ${initResponse.statusText}` };
+                            }
+                            throw new Error(errorBody.error || 'Server error during preparation.');
+                        }
                         
                         const { uploadUrl, assetId } = await initResponse.json();
-                        if (typeof uploadUrl !== 'string' || !uploadUrl.trim() || typeof assetId !== 'string' || !assetId.trim()) {
-                            console.error('Invalid response from upload preparation function:', { uploadUrl, assetId });
+                        if (!assetId || !uploadUrl) {
                             throw new Error('Could not prepare the video upload. The server response was incomplete.');
                         }
                         
@@ -334,18 +339,14 @@
                                         pollUrl.searchParams.set('assetId', assetId);
 
                                         const pollResponse = await fetch(pollUrl.toString());
-                                        
                                         if (!pollResponse.ok) {
                                             clearInterval(intervalId);
                                             const errBody = await pollResponse.json().catch(() => ({ error: `Polling failed with status: ${pollResponse.statusText}` }));
-                                            const errorMsg = `Polling for video status failed. Server says: "${errBody.error}"`;
-                                            console.error(errorMsg, { response: errBody });
-                                            reject(new Error(errorMsg));
+                                            reject(new Error(errBody.error || 'Polling for video status failed.'));
                                             return;
                                         }
 
                                         const pollData = await pollResponse.json();
-                                        
                                         if (pollData.status === 'ready' && pollData.playbackId) {
                                             clearInterval(intervalId);
                                             resolve(pollData.playbackId);
@@ -353,12 +354,11 @@
                                             clearInterval(intervalId);
                                             reject(new Error('Mux failed to process the video. Please try a different file.'));
                                         }
-                                        // Otherwise, continue polling
                                     } catch (error) {
                                         clearInterval(intervalId);
                                         reject(error);
                                     }
-                                }, 3000); // Poll every 3 seconds
+                                }, 3000);
                             });
                         };
 
@@ -385,7 +385,13 @@
 
                     } catch (error) {
                         console.error("Full error details:", error);
-                        alert(`An error occurred while adding the lesson. Please check the developer console for more details. Message: ${error.message}`);
+                        let userMessage = `An error occurred while adding the lesson: ${error.message}`;
+                        if (error.message.includes('Mux API credentials')) {
+                            userMessage += '\n\nThis is a server configuration issue. Please ensure MUX_TOKEN_ID and MUX_TOKEN_SECRET are set correctly in the Netlify dashboard.';
+                        } else if (error.message.includes('Server error')) {
+                             userMessage += '\n\nThis could be due to a server-side problem. Please check the Netlify function logs for more details.';
+                        }
+                        alert(userMessage);
                     } finally {
                         btn.disabled = false;
                         btn.textContent = 'Save Lesson';
